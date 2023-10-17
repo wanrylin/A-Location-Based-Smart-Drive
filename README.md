@@ -1,5 +1,7 @@
 # A-Location-Based-Smart-Drive
-UVIC ECE 569A IOT Course project 2023 fall
+Course project of UVic ECE569A - Selected Topics in Computer Engineering: Internet of Things: Analytics and Security<br>
+Instructor: Wei Li<br>
+Term: 2023 fall
 
 ## Group members:
 Walaeldin Abdalla walaeldina@uvic.ca<br>
