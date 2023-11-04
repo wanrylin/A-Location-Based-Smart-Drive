@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DropzoneJS Example</title>
+    <link href="https://unpkg.com/dropzone/dist/dropzone.css" rel="stylesheet">
+</head>
+<body>
+
+<form action="/file-upload" class="dropzone" id="my-awesome-dropzone"></form>
+
+<script src="https://unpkg.com/dropzone/dist/dropzone.js"></script>
+<script>
+    // Disable auto discovery for all elements:
+    Dropzone.autoDiscover = false;
+
+    // Initialize a new Dropzone instance:
+    var myDropzone = new Dropzone("#my-awesome-dropzone", {
+        url: "/file-upload",
+        paramName: "file", // The name that will be used to transfer the file
+        maxFilesize: 2, // MB
+        acceptedFiles: "image/*,application/pdf,.psd",
+        // ... other configuration options
+    });
+</script>
+
+</body>
+</html>
