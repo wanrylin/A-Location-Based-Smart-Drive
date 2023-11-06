@@ -144,9 +144,11 @@ def copy_file(source_file_path, file_father_path,file_name):
 
 if __name__ == "__main__":
     # get test postal code
-    postal_code = get_postal_code(1)
+    #postal_code = get_postal_code(1)
+    postal_code = "V8N 3X2"
     # get address according to the postal code
-    address = get_address(postal_code)
+    # address = get_address(postal_code)
+    address = "University of Victoria, West Campus Way, Oak Bay, Capital Regional District, British Columbia, V8N 3X2, Canada"
     # get file path according to the address
     file_path, add_flag, test_repository_flag, test_file_folder = get_path(address)
     # create test file

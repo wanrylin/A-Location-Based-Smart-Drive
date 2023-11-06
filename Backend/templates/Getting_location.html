@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Current Position</title>
+    
+    
+</head>
+     <!-- 在页面上显示当前位置的国家、省份、城市、街道和邮政编码信息 -->
+<body>
+    <h1>Current Position：</h1>
+    <p><strong>Country：</strong> <span id="country"></span></p>
+    <p><strong>Province：</strong> <span id="province"></span></p>
+    <p><strong>City：</strong> <span id="city"></span></p>
+    <p><strong>Street：</strong> <span id="street"></span></p>
+    <p><strong>Post-code：</strong> <span id="postcode"></span></p>
+
+    <script>
+    		//console.log('Google Maps API正在加载');
+    		// 初始化地图的回调函数
+        //function initMap() 
+        //{
+        //console.log('Google Maps API已加载');
+        //}// 这里放置你的地图初始化和地理编码逻辑
+        //function checkMapLoaded() {
+  			//	if (typeof google === "undefined") {
+    		//					setTimeout(checkMapLoaded, 1000);
+  			//	} 
+        //  else {
+    					// do some work here
+    		//			initSchMap();
+  				
+    		console.log('Hi');
+        // 检测浏览器是否支持Geolocation API
+        if (navigator.geolocation) 
+        	{
+          	console.log('Hi,inside navigator.geolocation');
+            // 获取用户当前地理位置
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                								console.log('Hi,inside getCurrentPosition');
+                                // 提取经纬度坐标
+                								var lat = position.coords.latitude;
+               								 	var lng = position.coords.longitude;
+               									 // 输出经度和纬度到控制台
+       				 									console.log('Latitude:', lat);
+        												console.log('Longtitude:', lng);
+                                // 创建一个Google Maps Geocoder对象
+                								var geocoder = new google.maps.Geocoder();                            
+                                // 创建一个地理位置坐标对象
+                								var latlng = new google.maps.LatLng(lat, lng);
+
+                                // 通过Geocoder将地理位置坐标转换为地理地址
+               									geocoder.geocode({ 'latLng': latlng }, function (results, status) 
+                								{
+                                  // 检查地理编码是否成功
+                   								if (status === google.maps.GeocoderStatus.OK) 
+                    								{
+                                      // 检查是否有返回的地理地址信息
+                        							if (results[1]) 
+                        								{
+                                          // 提取地址组件
+                            							var addressComponents = results[1].address_components;
+                                          // 遍历地址组件，提取相应的信息并显示在页面上
+                            							for (var i = 0; i < addressComponents.length; i++) 
+                            								{
+                                							var component = addressComponents[i];
+                                							if (component.types.includes('country')) 
+                                              	{
+                                    							document.getElementById('country').textContent = component.long_name;
+                                								}
+                                							if (component.types.includes('administrative_area_level_1')) 
+                                              	{
+                                    							document.getElementById('province').textContent = component.long_name;
+                                								}
+                                							if (component.types.includes('locality')) 
+                                              	{
+                                    							document.getElementById('city').textContent = component.long_name;
+                                								}
+                                							if (component.types.includes('route')) 
+                                              	{
+                                    							document.getElementById('street').textContent = component.long_name;
+                                								}
+                                							if (component.types.includes('postal_code')) 
+                                              	{
+                                    							document.getElementById('postcode').textContent = component.long_name;
+                                								}
+                            								}
+                        								}
+                    								} 
+                                  // 地理编码失败时输出错误信息到控制台
+                     							else 	
+                    								{
+                        							console.error('Geocode was not successful for the following reason: ' + status);
+                    								}
+                								});
+                             	console.log('获取位置成功！', position);
+                             	console.log('Hi,inside getCurrentPosition');
+                            },
+                (err) => {
+                             console.log('获取位置失败！', err)
+                            },
+                );
+        } 
+        // 浏览器不支持Geolocation API时输出错误信息到控制台
+        else 
+        {
+        		console.log('Hi,error');
+            console.error('Geolocation is not supported by this browser.');
+        }
+       //}
+		 //}
+        console.log('Hi,outside');
+    </script>
+    <!-- 引入Google Maps JavaScript API，key参数是用来进行身份验证的API密钥，libraries参数用于加载Places库 -->
+    <script async defer src="https://maps.googleapis.com/maps/api/jason?key=AIzaSyA21FZmQBFpa5NcD7HEltyf4dLOwbguDJM&libraries=places&callback=initMap"></script>
+</body>
+
+</html>

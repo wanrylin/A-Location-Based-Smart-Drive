@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Location and Progress Example</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <style>
+        #mapid { height: 400px; width: 400px;}
+        #progressBarContainer {
+            width: 30%;
+            background-color: #ddd;
+        }
+
+        #progressBar {
+            width: 1%;
+            height: 30px;
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Your Current Location</h1>
+    <p><span id="address"></span></p>
+    <div id="progressBarContainer">
+        <div id="progressBar"></div>
+    </div>
+    <div id="mapid"></div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <script>
+        var progress = 0; // Initialize progress at 0
+
+        // Function to update the progress bar
+        function updateProgress(step) {
+            progress += step;
+            document.getElementById('progressBar').style.width = progress + '%';
+            if (progress >= 100) {
+                // Hide the progress bar when the process is complete
+                document.getElementById('progressBarContainer').style.display = 'none';
+            }
+        }
+
+        // Function to start the progress update interval
+        function startProgress() {
+            progressInterval = setInterval(function() {
+                updateProgress(5);
+            }, 1000); // Update progress every 1000 milliseconds (1 second)
+        }
+
+        // Get the detailed address of the location
+        function getOSMAddress(latitude, longitude) {
+            var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.display_name); // 这里你得到了详细地址
+
+                    // 访问 data.address 对象中的属性
+                    var address = data.address;
+                    if (address) {
+                        var addressString = '';
+                        if (data.display_name) addressString += data.display_name;
+
+                        // 确保最后不会有多余的逗号
+                        //addressString = addressString.replace(/, $/, '');
+
+                        // 现在设置 addressString 到页面元素
+                        document.getElementById('address').textContent = addressString;
+                    }
+                })
+                .catch(error => console.error(error));
+        }
+
+
+        // Function to initialize the map
+        function initMap(latitude, longitude) {
+            // Set progress to 50% once we have the location
+            updateProgress(40);
+            // Show the address
+            getOSMAddress(latitude, longitude);
+            // Create a map in the "mapid" div after a short delay to simulate processing time
+            setTimeout(function() {
+                var map = L.map('mapid').setView([latitude, longitude], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                var marker = L.marker([latitude, longitude]).addTo(map);
+                //marker.bindPopup("<b>You are here!</b>").openPopup();
+
+                // Set progress to 100% once the map is loaded
+                updateProgress(50);
+            }, 500); // Simulate a delay for loading the map
+        }
+
+        // Function to get the current position
+        function getLocation() {
+            if (navigator.geolocation) {
+                // Set progress to 10% to indicate that the process has started
+                startProgress();
+
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    var latitude = position.coords.latitude;
+                    var longitude = position.coords.longitude;
+                    initMap(latitude, longitude);
+                }, function(error) {
+                    alert("Error occurred. Error code: " + error.code);
+                    // Set progress to 100% as the process ends even if it failed
+                    updateProgress(100 - progress);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+                // Set progress to 100% as the process ends if not supported
+                updateProgress(100);
+            }
+        }
+
+
+
+
+
+        // Call getLocation function to get the current position
+        getLocation();
+    </script>
+
+</body>
+</html>
