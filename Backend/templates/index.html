@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Privacy permissions request</title>
+    <style>
+        .buttonAgree {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: black;
+            background-color: lightgray;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+        }
+
+        .buttonDisagree {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: black;
+            background-color: white;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 9px #999;
+        }
+
+        .buttonAgree:hover {background-color: gray}
+        .buttonDisagree:hover {background-color: gray}
+
+        .buttonAgree:active {
+            background-color: limegreen;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+        .buttonDisagree:active {
+            background-color: red;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Do you agree to share your location?</h1>
+
+<!-- Button for AutoLocationFrontendv1.html -->
+<a href="/TypeLocation" class="buttonDisagree">No</a>
+
+<!-- Button for frontendv2.html -->
+<a href="/AutoLocation" class="buttonAgree">Yes, I agree</a>
+
+</body>
+</html>
