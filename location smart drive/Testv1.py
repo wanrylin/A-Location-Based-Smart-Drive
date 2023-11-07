@@ -60,21 +60,20 @@ def get_path(address):
 
     return add_path,add_flag,test_repository_flag,test_file_folder
 
-# copy the file to the given file path
-def copy_file(source_file_path, file_father_path,file_name):
-    # Specify the destination path
-    destination_path = os.path.join(file_father_path,file_name)
-    try:
-        # Attempt to copy the file
-        dest = shutil.copy2(source_file_path, destination_path)
-        return f'Copy successful: {dest}'
-    except FileNotFoundError as e:
-        return f'File not found: {e}'
-    except PermissionError as e:
-        return f'Permission error: {e}'
-    except Exception as e:
-        # Catch any other exceptions
-        return f'An error occurred: {e}'
+# Save a file with a unique name in the specified directory
+def copy_file(file_path, file_name):
+    # Get the file name and extension
+    base, extension = os.path.splitext(file_name)
+    counter = 1
+    unique_filename = file_name
+
+    # Check if the file exists and create a new filename if necessary
+    while os.path.exists(os.path.join(file_path, unique_filename)):
+        unique_filename = f"{base}({counter}){extension}"
+        counter += 1
+
+    new_file_path = os.path.join(file_path, unique_filename)
+    return new_file_path
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -97,7 +96,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         # get file path according to the address
         folder_path, add_flag, test_repository_flag, test_file_folder = get_path(address)
-        file_path = os.path.join(folder_path, filename)
+        file_path = copy_file(folder_path, filename)
         # save received file
         try:
             # Attempt to copy the file
