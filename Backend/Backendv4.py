@@ -123,12 +123,12 @@ def home():
     return render_template('index.html')
 
 @app.route('/AutoLocation')
-def frontend_v4():
+def autolocation():
     # Render AutoLocationFrontendv1.html when the corresponding button is clicked
     return render_template('AutoLocationFrontendv1.html')
 
 @app.route('/TypeLocation')
-def frontend_v2():
+def manuallocation():
     # Render frontendv2.html when the corresponding button is clicked
     return render_template('TypeLocationFrontendv1.html')
 
