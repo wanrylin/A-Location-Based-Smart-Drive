@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IOT project: Type in Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .content-container {
+            display: flex;
+            flex-direction: row; /* Stack elements vertically on smaller screens */
+            width: 100%;
+        }
+
+        .text-container {
+            width: 40%; /* On smaller screens, take full width */
+            padding: 20px;
+            text-align: left;
+            margin-right: 10vw;
+        }
+
+        .dropzone {
+            width: 40vw; /* Use viewport width */
+            height: 40vh; /* Use viewport height */
+            border: 2px dashed #0087F7;
+            border-radius: 5px;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 10vh;
+            /*margin-top: 10vh;*/
+        }
+
+        #mapid {
+            height: 50vh; /* Fixed height for the map */
+            width: 100%; /* Take the full width of the parent */
+        }
+
+        /* Style for the address input */
+        #address-input {
+            width: 83%; /* 更宽的输入框 */
+            height: 30px; /* 更高的输入框 */
+            font-size: 16px; /* 更大的字体 */
+            padding: 5px 10px; /* 内填充，使文本在框内更居中 */
+            /*margin-bottom: 10px; /* 在下方添加一些空间 */
+        }
+
+        /* Style for the address select dropdown */
+        #address-select {
+            width: 100%; /* 更宽的选择框 */
+            height: 110px; /* 可以显示更多的选项 */
+            font-size: 16px; /* 选择框内的字体大小 */
+            padding: 5px 10px; /* 内填充，使选项在框内更居中 */
+        }
+
+        #Location-instruction {
+            font-size: 20px;
+            font-weight: bold; /* 加粗文本 */
+            font-family: Arial, sans-serif; /* 设置字体为Arial，没有Arial时使用无衬线字体作为备选 */
+        }
+
+        #dropzone-instruction {
+            width: 40vw; /* Use viewport width */
+            font-size: 18px;
+            color: red;
+            text-align: center;
+            margin-bottom: 5vh; /* Add some space between the instruction text and the dropzone */
+            margin-top: 10vh;
+        }
+
+        #file-paths {
+            width: 40vw; /* Use viewport width */
+            font-size: 14px;
+            color: darkblue;
+            text-align: left;
+            margin-top: 5vh;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="content-container">
+    <!-- Container for the text and map -->
+    <div class="text-container">
+        <h1>Type in your address here:</h1>
+        <div id="address-input-container">
+            <input type="text" id="address-input" placeholder="Enter an address">
+            <button id="address-search-btn">Search</button>
+            <select id="address-select" size="5"></select> <!-- 新增加的下拉菜单，size属性设置可见选项的数目 -->
+        </div>
+        <p id="Location-instruction">Your Selected Location:</p>
+        <p><span id="address_show"></span></p>
+        <div id="progressBarContainer">
+            <div id="progressBar"></div>
+        </div>
+        <div id="mapid"></div>
+    </div>
+
+    <!-- Container for the dropzone -->
+    <div class="dropzone-container">
+        <p id="dropzone-instruction">Don't upload any sensitive or private files using public Wi-Fi!</p>
+        <div class="dropzone" id="my-awesome-dropzone"></div>
+        <ul id="file-paths"></ul> <!-- 新增的列表 -->
+    </div>
+</div>
+
+<!-- ... DropzoneJS code ... -->
+<!-- 这是备选的文件选择输入 -->
+<input type="file" id="fileInput" name="file" style="display: none;" />
+
+<!-- 先加载 DropzoneJS -->
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+    var progress = 0; // Initialize progress at 0
+    var map; // Declare 'map' as a global variable
+    var current_location; // Declare 'location' as the address for file to save
+    var currentMarker; // This will hold the current marker on the map
+
+    // 禁用 Dropzone 的自动发现功能
+    Dropzone.autoDiscover = false;
+
+    // 初始化 Dropzone
+    var myDropzone = new Dropzone("#my-awesome-dropzone", {
+        url: "/file-upload",
+        paramName: "file",
+        maxFilesize: 2,
+        acceptedFiles: "image/*,application/pdf,.psd",
+        dictDefaultMessage: "Drag and drop files here or click to upload", // 自定义消息
+        sending: function(file, xhr, formData) {
+            // 附加地址数据到请求中
+            console.log(current_location);
+            formData.append('address', current_location);
+        }
+    });
+
+    // Add an event listener for when a file is successfully uploaded
+    myDropzone.on("success", function(file, response) {
+        // 'response' is the JSON data from the server
+        console.log(response.message); // Message from the server
+        console.log(response.file_path); // The path to the uploaded file
+
+        // Get the list element
+        var pathsList = document.getElementById('file-paths');
+
+        // Create a new list item for the file path
+        var listItem = document.createElement('li');
+        listItem.textContent = 'File is saved at: ' + response.file_path;
+
+        // Append the new list item to the list
+        pathsList.appendChild(listItem);
+    });
+
+    // Get the detailed address of the location
+    function getOSMAddress(latitude, longitude) {
+        var url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // This is the detailed address
+
+                // Set the detailed address to the page element
+                updateStorageAddress(data)
+                //document.getElementById('address_show').textContent = data.display_name;
+
+                // Now send this data back to the server
+                sendAddressToServer(current_location);
+            })
+            .catch(error => console.error(error));
+    }
+
+    // Send the location data back to the server
+    function sendAddressToServer(address) {
+        fetch('/location-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ address: address })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Location data was successfully sent to the server.');
+                }
+                return response.text();
+            })
+            .then(text => console.log(text))
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Function to initialize the map
+    function initMap(latitude, longitude) {
+        // Show the address
+        getOSMAddress(latitude, longitude);
+        // Create a map in the "mapid" div after a short delay to simulate processing time
+        setTimeout(function() {
+            map = L.map('mapid').setView([latitude, longitude], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            var marker = L.marker([latitude, longitude]).addTo(map);
+            marker.bindPopup("<b>Your location</b>").openPopup();
+        }, 500); // Simulate a delay for loading the map
+    }
+
+    // Function to update the address
+    function updateStorageAddress(Addressdata){
+        console.log(Addressdata)
+        document.getElementById('address_show').textContent = Addressdata.display_name;
+        var city = Addressdata.address.city || Addressdata.address.town || ''; // 如果 city 不存在，尝试使用 town，如果两者都不存在，使用空字符串
+        var county = Addressdata.address.county || '';
+        var state = Addressdata.address.state || '';
+        console.log(city)
+
+        // 构建一个数组，包含所有非空的地址部分
+        var addressParts = [city, county, state].filter(part => part !== '');
+        console.log(addressParts);
+        // 将数组连接成一个字符串，各部分用逗号和空格分隔
+        current_location = addressParts.join(', ');
+        console.log(current_location)
+    }
+
+    // Function to search for an address and display it on the map
+    function searchAddress() {
+        var addressInput = document.getElementById('address-input').value; // Get the address from the input field
+        var url = `https://nominatim.openstreetmap.org/search?addressdetails=1&q=${encodeURIComponent(addressInput)}&format=json`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                var addressSelect = document.getElementById('address-select');
+                addressSelect.innerHTML = ''; // 清空下拉菜单中的现有选项
+
+                if (data.length > 0) {
+                    // 填充下拉菜单
+                    data.forEach(function(item) {
+                        var option = document.createElement('option');
+                        option.value = item.display_name;
+                        option.textContent = item.display_name;
+                        addressSelect.appendChild(option);
+                    });
+
+                    // Default choose the first address and initialize the map
+                    var latitude = data[0].lat;
+                    var longitude = data[0].lon;
+                    initMap(latitude, longitude);
+                } else {
+                    alert('Address not found!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while searching the address.');
+            });
+    }
+
+    // 添加监听器到下拉菜单，当选项改变时更新地图
+    document.getElementById('address-select').addEventListener('change', function() {
+        var selectedAddress = this.value;
+        var url = `https://nominatim.openstreetmap.org/search?addressdetails=1&q=${encodeURIComponent(selectedAddress)}&format=json`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    console.log(data[0]);
+                    updateMapToAddress(data[0]);
+                    updateStorageAddress(data[0])
+                }
+            });
+    });
+
+    function updateMapToAddress(addressData) {
+        var latitude = addressData.lat;
+        var longitude = addressData.lon;
+
+        // Remove the previous marker if it exists
+        if (currentMarker) {
+            map.removeLayer(currentMarker);
+        }
+
+        // Update the map view
+        map.setView([latitude, longitude], 13);
+
+        // Add a new marker and save the reference to 'currentMarker'
+        currentMarker = L.marker([latitude, longitude]).addTo(map);
+        currentMarker.bindPopup(addressData.display_name).openPopup();
+    }
+
+    // Add event listener to the search button
+    document.getElementById('address-search-btn').addEventListener('click', searchAddress);
+
+</script>
+
+</body>
+</html>
