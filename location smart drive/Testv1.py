@@ -5,9 +5,9 @@ import shutil
 
 
 app = Flask(__name__)
-UPLOAD_FOLDER = '/Users/wanrylin/Python code/ECE 569 IOT/Backend test/test file'
+#UPLOAD_FOLDER = '/Users/wanrylin/Python code/ECE 569 IOT/Backend test/test file'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+#app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # find if the directory exist or not and create the folder if not exist
 def ensure_path_exist(directory):
@@ -43,7 +43,7 @@ def get_path(address):
     current_directory = os.getcwd()
     # Now to get the father (parent) directory:
     father_directory = os.path.dirname(current_directory)
-    test_repository = os.path.join(father_directory, "Backend test")
+    test_repository = os.path.join(current_directory, "Received file")
     # find it "test_repository" exist or not
     test_repository,test_repository_flag = ensure_path_exist(test_repository)
     # create a folder to store all the generated files
@@ -97,7 +97,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         # get file path according to the address
         folder_path, add_flag, test_repository_flag, test_file_folder = get_path(address)
-        file_path = os.path.join(folder_path, filename);
+        file_path = os.path.join(folder_path, filename)
         # save received file
         try:
             # Attempt to copy the file
