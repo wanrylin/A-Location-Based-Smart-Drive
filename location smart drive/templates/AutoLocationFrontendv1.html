@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate"> /* disable autotranslate */
     <title>IOT project: Located via GPS</title>
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
@@ -66,7 +67,7 @@
         #address-input {
             width: 83%; /* 更宽的输入框 */
             height: 30px; /* 更高的输入框 */
-            font-size: 16px; /* 更大的字体 */
+            font-size: 15px; /* 更大的字体 */
             padding: 5px 10px; /* 内填充，使文本在框内更居中 */
             /*margin-bottom: 10px; /* 在下方添加一些空间 */
         }
@@ -112,7 +113,7 @@
         <div id="mapid"></div>
         <p>If the location is incorrect, you can enter your address here:</p>
         <div id="address-input-container">
-            <input type="text" id="address-input" placeholder="Enter an address">
+            <input type="text" id="address-input" placeholder="Enter an address in street, town, city, state, country order">
             <button id="address-search-btn">Search</button>
             <select id="address-select" size="5"></select> <!-- 新增加的下拉菜单，size属性设置可见选项的数目 -->
         </div>
@@ -146,7 +147,7 @@
     var myDropzone = new Dropzone("#my-awesome-dropzone", {
         url: "/file-upload",
         paramName: "file",
-        maxFilesize: 2,
+        maxFilesize: 1024,
         acceptedFiles: "image/*,application/pdf,.psd",
         dictDefaultMessage: "Drag and drop files here or click to upload", // 自定义消息
         sending: function(file, xhr, formData) {

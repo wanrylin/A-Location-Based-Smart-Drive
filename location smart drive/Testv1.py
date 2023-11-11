@@ -6,7 +6,7 @@ import shutil
 
 app = Flask(__name__)
 #UPLOAD_FOLDER = '/Users/wanrylin/Python code/ECE 569 IOT/Backend test/test file'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+#ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'} # accepted file type for backend
 #app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # find if the directory exist or not and create the folder if not exist
@@ -92,7 +92,8 @@ def upload_file():
     if not address:
         return 'Address is required', 400
 
-    if file and allowed_file(file.filename):
+   # if file and allowed_file(file.filename):
+    if file:
         filename = secure_filename(file.filename)
         # get file path according to the address
         folder_path, add_flag, test_repository_flag, test_file_folder = get_path(address)

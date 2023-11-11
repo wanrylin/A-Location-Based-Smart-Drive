@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="google" content="notranslate"> /* disable autotranslate */
     <title>IOT project: Type in Location</title>
     <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
@@ -56,7 +57,7 @@
         #address-input {
             width: 83%; /* 更宽的输入框 */
             height: 30px; /* 更高的输入框 */
-            font-size: 16px; /* 更大的字体 */
+            font-size: 15px; /* 更大的字体 */
             padding: 5px 10px; /* 内填充，使文本在框内更居中 */
             /*margin-bottom: 10px; /* 在下方添加一些空间 */
         }
@@ -102,7 +103,7 @@
     <div class="text-container">
         <h1>Type in your address here:</h1>
         <div id="address-input-container">
-            <input type="text" id="address-input" placeholder="Enter an address">
+            <input type="text" id="address-input" placeholder="Enter an address in street, town, city, state, country order">
             <button id="address-search-btn">Search</button>
             <select id="address-select" size="5"></select> <!-- 新增加的下拉菜单，size属性设置可见选项的数目 -->
         </div>
@@ -131,9 +132,14 @@
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 <script>
     var progress = 0; // Initialize progress at 0
-    var map; // Declare 'map' as a global variable
+    //var map; // Declare 'map' as a global variable
     var current_location; // Declare 'location' as the address for file to save
     var currentMarker; // This will hold the current marker on the map
+    // Declare 'map' as a global variable and initialize it
+    var map = L.map('mapid').setView([0, 0], 2); // Default view
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
     // 禁用 Dropzone 的自动发现功能
     Dropzone.autoDiscover = false;
@@ -142,8 +148,8 @@
     var myDropzone = new Dropzone("#my-awesome-dropzone", {
         url: "/file-upload",
         paramName: "file",
-        maxFilesize: 2,
-        acceptedFiles: "image/*,application/pdf,.psd",
+        maxFilesize: 1024,
+        //acceptedFiles: "image/*,application/pdf,.psd", // acceptable file type
         dictDefaultMessage: "Drag and drop files here or click to upload", // 自定义消息
         sending: function(file, xhr, formData) {
             // 附加地址数据到请求中
@@ -208,18 +214,14 @@
     }
 
     // Function to initialize the map
+    // Modify initMap to only update the map view and marker
     function initMap(latitude, longitude) {
-        // Show the address
-        getOSMAddress(latitude, longitude);
-        // Create a map in the "mapid" div after a short delay to simulate processing time
-        setTimeout(function() {
-            map = L.map('mapid').setView([latitude, longitude], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
-            var marker = L.marker([latitude, longitude]).addTo(map);
-            marker.bindPopup("<b>Your location</b>").openPopup();
-        }, 500); // Simulate a delay for loading the map
+        if (currentMarker) {
+            map.removeLayer(currentMarker);
+        }
+        map.setView([latitude, longitude], 13);
+        currentMarker = L.marker([latitude, longitude]).addTo(map);
+        //currentMarker.bindPopup("<b>Your location</b>").openPopup();
     }
 
     // Function to update the address
