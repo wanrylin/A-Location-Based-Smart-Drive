@@ -3,18 +3,16 @@ Course project of UVic ECE569A - Selected Topics in Computer Engineering: Intern
 Instructor: Wei Li<br>
 Term: 2023 fall
 
-## Group members
-Walaeldin Abdalla walaeldina@uvic.ca<br>
-Lian Duan lduan@uvic.ca<br>
-Jiaxing Yao jiaxingyao@uvic.ca<br>
-Ruilin Wang ruilinwang@uvic.ca<br>
-Yi Lu yilu@uvic.ca<br>
 
-## Work distribution
-Project Manager: Walaeldin Abdalla <br>
-Backend and Frontend: Ruilin Wang<br>
-Frontend: Jiaxing Yao<br>
-Test: Yi Lu<br>
+##  Group members and Work distribution
+       Project Duration: 8 weeks
+       Team Members:
+•	Student 1:   Yi Lu                            V00901547       yilu@uvic.ca                          QA Tester
+•	Student 2:   Ruilin Wang                 V01031203       ruilinwang@uvic.ca       Backend Developer
+•	Student 3:   Lian Duan                     V01047375       lduan@uvic.ca                      Database Specialist
+•	Student 4:   Jiaxing Yao                  V01047304       jiaxingyao@uvic.ca                   Frontend Developer
+•	Student 5:  Walaeldin Abdalla         V01042368       Walaeldina@uvic.ca    Project Manager
+
 
 Ruilin Wang is the main developer for both frontend and backend. The software part of whole project is totally built by Ruilin Wang. Meanwhile, the location smart drive is developed by Wang and Jiaxing Yao offers many contributed help and work.
 
