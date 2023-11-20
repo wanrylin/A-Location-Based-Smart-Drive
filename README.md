@@ -25,11 +25,6 @@ The cornerstone of my role was to rigorously test and validate the functionality
 This final sentence highlights the successful outcome of the project, attributing it to both your leadership and the collective efforts of the team.
 
 
-
-
-
-
-
 ## Project topics
 Design and implement a cloud or local-computer based portal access smart drive system with any popular web browser on a computer or a cell phone/pad. User can drag and drop files to the portal interfacing area. The system will automatically put the files in different folders (on cloud or on your local computer) based on the real time location (name of the city) of the devices, such as “Vancouver”, “Surrey”, “Victoria”, “Burnaby”, “Coquitlam”, etc. If a new location is used, the system will automatically create a new folder for this new location and find out the city name of the location to use as the folder name, if the system cannot find the name of the city, the system will ask the user. The system will confirm after uploading (success/fail).
 
@@ -86,9 +81,8 @@ Scope of Testing:
 •	Usability Testing: We confirmed that the system was user-friendly and the prompts for manual location input were intuitive.
 
 Test Environment:
-•	Location: 1) University of Victoria, Engineering Lab Wing. 'Cordova bay' and 2) 'Village park Estates'.
-•	Date and Time: Monday, 13/11/2012, starting at 11:00 AM at 'Cordova bay' and continuing at 11:30 AM at 'Village park Estates'.
-•	Hardware: We used  two laptop computers .
+•	Location: 1) University of Victoria, Engineering Lab Wing. 'Oky bay Location' and Parks and Trails, Cordova Bay Road , Cordova BAY  Location and unknown location  
+•	Date and Time: Monday, 13/11/2012, starting at 11:00 AM at University of Victoria, Engineering Lab Wing. 'Oky bay Location' and continuing at 11:30 AM at Parks , Trails, Cordova Bay Road , Cordova BAY and unknown location  at 11:45 Am.
 •	Software: We tested across browsers (Chrome, Firefox, Edge) with the latest updates for compatibility testing.
 •	Network: We used both wired and wireless connections to simulate different network environments.
 
